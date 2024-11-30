@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -17,14 +19,8 @@ class UserController extends Controller
             'message' => 'Hello, World from create!',
         ]);
     }
-    public function store(Request $request){
+    public function store(UserRequest $request){
         // dd($request->all());
-       $request->validate([
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:3',
-       ]);
        $user = User::create([
         'first_name' => $request->first_name,
         'last_name' => $request->last_name,
@@ -44,24 +40,16 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Hello, World from edit!',
         ]);    }
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
-        $user = User::find($id);
-        // dd($user);
         // dd($request->all());
-       $request->validate([
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:3',
-       ]);
-       $user->update([
+        $user = User::find($id);
+        $user->update([
         'first_name' => $request->first_name,
         'last_name' => $request->last_name,
         'email' => $request->email,
-        'password' => Hash::make($request->password),
         ]);
-        return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
+        return response($user, Response::HTTP_CREATED);
     }
 
     public function destroy(string $id)
