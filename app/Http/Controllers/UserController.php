@@ -74,7 +74,9 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $user->update($request->only([
-            'first_name', 'last_name', 'email',
+            'first_name',
+            'last_name',
+            'email',
         ]));
 
         return response()->json([

@@ -21,13 +21,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
         return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
-
     }
     public function login(Request $request)
     {
         if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
             $token = $user->createToken('admin')->accessToken;
+            // dd($user);
+
             return [
                 'status' => true,
                 'message' => "Token genrate Successfully",
@@ -38,18 +39,5 @@ class AuthController extends Controller
         return response([
             'error' => 'Invalid Credentials!',
         ], Response::HTTP_UNAUTHORIZED);
-    }
-
-    public function profile(Request $request)
-    {
-
-    }
-    public function updateProfile(Request $request)
-    {
-
-    }
-    public function updatePassword(Request $request)
-    {
-
     }
 }
