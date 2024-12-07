@@ -1,21 +1,26 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\AuthController;
 
-// Route::apiResource('users', UserController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::apiResource('roles', RoleController::class);
-
 Route::group(
     ['middleware' => 'auth:api'],
     function () {
-        Route::get('/user', [UserController::class, 'profile']);
-        Route::put('/update/user', [UserController::class, 'updateProfile']);
-        Route::put('/update/password', [UserController::class, 'updatePassword']);
-        Route::delete('/profile/delete', [UserController::class, 'destroyProfile']);
+        Route::group(
+            ['prefix' => '/profile'],
+            function () {
+                Route::get('', [ProfileController::class, 'showProfile']);
+                Route::put('/edit', [ProfileController::class, 'editProfile']);
+                Route::put('/password/update', [ProfileController::class, 'changePassword']);
+                Route::delete('/profile/delete', [ProfileController::class, 'destroyProfile']);
+            }
+        );
+        Route::apiResource('users', UserController::class);
+        Route::apiResource('roles', RoleController::class);
     }
 );

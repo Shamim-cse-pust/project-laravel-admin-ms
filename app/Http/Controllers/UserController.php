@@ -30,6 +30,7 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role_id' => $request->role_id,
         ]);
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }
@@ -47,11 +48,13 @@ class UserController extends Controller
     }
     public function update(UserRequest $request, string $id)
     {
+        // dd($request->all());
         $user = User::find($id);
         $user->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
+            'role_id' => $request->role_id,
         ]);
         return response($user, Response::HTTP_CREATED);
     }
@@ -63,52 +66,6 @@ class UserController extends Controller
         return response()->json([
             'user' => $user,
             'message' => 'delete successfully!',
-        ]);
-    }
-
-    public function profile()
-    {
-        return Auth::user();
-    }
-    public function updateProfile(UserRequest $request)
-    {
-        $user = Auth::user();
-        $user->update($request->only([
-            'first_name',
-            'last_name',
-            'email',
-        ]));
-
-        return response()->json([
-            'user' => $user,
-            'message' => 'Update Profile successfully!',
-        ]);
-    }
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'password' => 'required|string|min:2|confirmed',
-        ]);
-
-        $user = Auth::user();
-        $user->update(([
-            'password' => Hash::make($request->input(('password'))),
-        ]));
-
-        return response()->json([
-            'user' => $user,
-            'message' => 'Update Password successfully!',
-        ]);
-    }
-    public function destroyProfile(Request $request)
-    {
-        $user = Auth::user();
-        $id = $user->id;
-        User::destroy($id);
-
-        return response()->json([
-            'user' => $user,
-            'message' => 'Delete User successfully!',
         ]);
     }
 }
