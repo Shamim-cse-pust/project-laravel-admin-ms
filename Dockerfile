@@ -21,6 +21,8 @@ RUN docker-php-ext-install pdo mbstring pdo_mysql
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 WORKDIR /app
 COPY . .
+# RUN chmod 777 -R storage
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN composer install
 # Install Node.js (for frontend scaffolding)
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
