@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
+            OrderSeeder::class,
+            OrderItemSeeder::class,
         ]);
 
         // User::factory()->create([
