@@ -11,7 +11,8 @@ use App\Http\Controllers\ProductController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::apiResource('/products', ProductController::class);
-Route::apiResource('orders', OrderController::class)->only(['index','show']);
+// Route::Resource('orders', OrderController::class)->only(['index','show']);
+Route::get('/orders/export', [OrderController::class, 'export']);
 Route::group(
     ['middleware' => 'auth:api'],
     function () {
