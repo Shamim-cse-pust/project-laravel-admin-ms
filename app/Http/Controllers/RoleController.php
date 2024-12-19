@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Requests\RoleRequest;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\RoleResource;
 
 class RoleController extends Controller
 {
@@ -13,7 +15,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return Role::paginate();
+        return RoleResource::collection(Role::all());
     }
 
     /**
@@ -29,9 +31,20 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        Role::create([
+        $role = Role::create([
             'name' => $request->name,
         ]);
+
+        if ($request->input('permissions')) {
+            $permissions = $request->input('permissions');
+            foreach ($permissions as $permission_id) {
+                DB::table('role_permissions')->insert([
+                    'role_id' => $role->id,
+                    'permission_id' => $permission_id,
+                ]);
+            }
+        }
+
         return $request->name . " Role Created Successfully";
     }
 
@@ -58,8 +71,19 @@ class RoleController extends Controller
     public function update(RoleRequest $request, string $id)
     {
         $role = Role::find($id);
-        // dd($request->all());
-        $role->update($request->all());
+        $role->update($request->only('name'));
+
+        DB::table('role_permissions')->where('role_id', $role->id)->delete();
+
+        if ($request->input('permissions')) {
+            $permissions = $request->input('permissions');
+            foreach ($permissions as $permission_id) {
+                DB::table('role_permissions')->insert([
+                    'role_id' => $role->id,
+                    'permission_id' => $permission_id,
+                ]);
+            }
+        }
 
         return $role->name . " Role Update Successfully";
     }
@@ -70,6 +94,8 @@ class RoleController extends Controller
     public function destroy(string $id)
     {
         $role = Role::find($id);
+        DB::table('role_permission')->where('role_id', $role->id)->delete();
+
         Role::destroy($role->id);
 
         return $role->name . " delete Successfully";

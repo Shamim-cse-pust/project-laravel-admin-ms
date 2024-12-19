@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRequest;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     public function index()
     {
-        // $users = User::with('role')->get();
-        // return response()->json($users);
+        $user = User::find(1);
+        Auth::login($user);
+        Gate::authorize('view', 'users');
         $users = User::all();
-        return  UserResource::collection($users);
-        // $users = User::paginate();
-        // return response()->json($users);
+        return UserResource::collection($users);
     }
     public function create()
     {
@@ -29,7 +30,9 @@ class UserController extends Controller
     }
     public function store(UserRequest $request)
     {
-        // dd($request->all());
+        $user = User::find(1);
+        Auth::login($user);
+        Gate::authorize('edit', 'users');
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -43,6 +46,9 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::find($id);
+        Auth::login($user);
+        Gate::authorize('view', 'users');
+
         return response()->json($user);
     }
     public function edit(string $id)
@@ -53,8 +59,10 @@ class UserController extends Controller
     }
     public function update(UserRequest $request, string $id)
     {
-        // dd($request->all());
         $user = User::find($id);
+        Auth::login($user);
+        Gate::authorize('view', 'users');
+        // $user = User::find($id);
         $user->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -66,6 +74,9 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
+        $users = User::find(1);
+        Auth::login($users);
+        Gate::authorize('edit', 'users');
         $user = User::find($id);
         User::destroy($id);
         return response()->json([

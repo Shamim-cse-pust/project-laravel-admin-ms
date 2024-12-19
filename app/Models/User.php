@@ -31,6 +31,13 @@ use Laravel\Passport\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @property int|null $role_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Client> $clients
+ * @property-read int|null $clients_count
+ * @property-read \App\Models\Role|null $role
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Token> $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoleId($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -62,5 +69,19 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function permissions()
+    {
+        return $this->role->permissions()->pluck('name');
+    }
+
+    public function hasAccessView($model)
+    {
+        return $this->permissions()->contains("view_{$model}");
+    }
+    public function hasAccessEdit($model)
+    {
+        return $this->permissions()->contains("edit_{$model}");
     }
 }
