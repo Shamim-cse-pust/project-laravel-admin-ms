@@ -8,7 +8,6 @@ use Illuminate\Http\Response;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,8 +15,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $user = User::find(1);
-        Auth::login($user);
+        $user = Auth::user();
         Gate::authorize('view', 'users');
         $users = User::all();
         return UserResource::collection($users);
@@ -30,8 +28,7 @@ class UserController extends Controller
     }
     public function store(UserRequest $request)
     {
-        $user = User::find(1);
-        Auth::login($user);
+        $user = Auth::user();
         Gate::authorize('edit', 'users');
         $user = User::create([
             'first_name' => $request->first_name,
@@ -45,8 +42,7 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $user = User::find($id);
-        Auth::login($user);
+        $user = Auth::user();
         Gate::authorize('view', 'users');
 
         return response()->json($user);
@@ -59,8 +55,7 @@ class UserController extends Controller
     }
     public function update(UserRequest $request, string $id)
     {
-        $user = User::find($id);
-        Auth::login($user);
+        $user = Auth::user();
         Gate::authorize('view', 'users');
         // $user = User::find($id);
         $user->update([
@@ -74,8 +69,7 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
-        $users = User::find(1);
-        Auth::login($users);
+        $user = Auth::user();
         Gate::authorize('edit', 'users');
         $user = User::find($id);
         User::destroy($id);
