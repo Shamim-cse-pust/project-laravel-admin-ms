@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         Gate::authorize('view', 'users');
-        $users = User::all();
+        $users = User::paginate(10);
         return UserResource::collection($users);
     }
     public function create()
