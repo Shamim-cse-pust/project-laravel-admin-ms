@@ -28,13 +28,12 @@ class UserController extends Controller
     }
     public function store(UserRequest $request)
     {
-        $user = Auth::user();
         Gate::authorize('edit', 'users');
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make('1234'),
             'role_id' => $request->role_id,
         ]);
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
@@ -42,9 +41,8 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $user = Auth::user();
+        $user = User::find($id);
         Gate::authorize('view', 'users');
-
         return response()->json($user);
     }
     public function edit(string $id)
@@ -55,9 +53,8 @@ class UserController extends Controller
     }
     public function update(UserRequest $request, string $id)
     {
-        $user = Auth::user();
         Gate::authorize('view', 'users');
-        // $user = User::find($id);
+        $user = User::find($id);
         $user->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
