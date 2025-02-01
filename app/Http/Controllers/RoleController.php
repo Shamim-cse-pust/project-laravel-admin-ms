@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use App\Models\RolePermission;
 use App\Http\Requests\RoleRequest;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\RoleResource;
+use Illuminate\Support\Facades\Gate;
 
 class RoleController extends Controller
 {
@@ -15,6 +17,7 @@ class RoleController extends Controller
      */
     public function index()
     {
+        Gate::authorize('view', 'roles');
         return RoleResource::collection(Role::all());
     }
 
@@ -31,6 +34,7 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
+        Gate::authorize('edit', 'roles');
         $role = Role::create([
             'name' => $request->name,
         ]);
@@ -70,6 +74,7 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, string $id)
     {
+        Gate::authorize('edit', 'roles');
         $role = Role::find($id);
         $role->update($request->only('name'));
 
@@ -93,11 +98,10 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
+        Gate::authorize('edit', 'roles');
         $role = Role::find($id);
-        DB::table('role_permission')->where('role_id', $role->id)->delete();
-
+        RolePermission::where('role_id', $role->id)->delete();
         Role::destroy($role->id);
-
         return $role->name . " delete Successfully";
     }
 }
