@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -22,6 +22,6 @@ class Permission extends Model
 {
     /** @use HasFactory<\Database\Factories\PermissionFactory> */
     use HasFactory;
-    protected $guarded = ['id'];
 
+    protected $guarded = ['id'];
 }
