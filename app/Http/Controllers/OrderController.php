@@ -10,8 +10,8 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::all();
-        return $orders;
+        $orders = Order::paginate(10);
+        return OrderResource::collection($orders);
     }
 
     public function show($id)

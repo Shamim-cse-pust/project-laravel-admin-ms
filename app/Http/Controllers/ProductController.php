@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::paginate(10);
         return response()->json(ProductResource::collection($products));
     }
 
@@ -36,12 +36,24 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        // Ensure file is uploaded
+        if (!$request->hasFile('image')) {
+            return response()->json(['error' => 'No image uploaded!'], 400);
+        }
         $extension = $request->file('image')->getClientOriginalExtension();
         $time = time();
         $imageName = 'product_image_' . $time . '.' . $extension;
+
+        // Store Image
         $imagePath = $request->file('image')->storeAs('images/products', $imageName, 'public');
+
+        // Debug the full path
+        \Log::info('Image stored at: ' . storage_path('app/public/' . $imagePath));
+
+        // Convert storage path to public path
         $imagePath = '/storage/' . $imagePath;
 
+        // Save product
         $product = Product::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
@@ -50,7 +62,7 @@ class ProductController extends Controller
             'price' => $request->price,
         ]);
 
-        return $product . " Created Successfully";
+        return response()->json(['message' => 'Product Created Successfully', 'product' => $product]);
     }
 
     /**

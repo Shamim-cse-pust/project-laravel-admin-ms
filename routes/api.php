@@ -11,16 +11,16 @@ use App\Http\Controllers\ProductController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::apiResource('/products', ProductController::class);
-// Route::Resource('orders', OrderController::class)->only(['index','show']);
-Route::get('/orders/export', [OrderController::class, 'export']);
-Route::apiResource('users', UserController::class);
 Route::get('/permissions', [PermissionController::class, 'index']);
 Route::group(
     ['middleware' => 'auth:api'],
     function () {
         Route::apiResource('users', UserController::class);
         Route::apiResource('roles', RoleController::class);
+        Route::apiResource('/products', ProductController::class);
+        Route::get('/orders/export', [OrderController::class, 'export']);
+        Route::Resource('orders', OrderController::class)->only(['index','show']);
+        Route::apiResource('users', UserController::class);
         Route::group(
             ['prefix' => '/profile'],
             function () {
