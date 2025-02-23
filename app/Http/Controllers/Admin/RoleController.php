@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\RolePermission;
 use App\Http\Requests\RoleRequest;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\RoleResource;
 use Illuminate\Support\Facades\Gate;
 
