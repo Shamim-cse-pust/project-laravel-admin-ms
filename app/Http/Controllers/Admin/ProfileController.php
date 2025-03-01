@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -13,8 +14,15 @@ class ProfileController extends Controller
 {
     public function showProfile()
     {
-        // return Auth::user()->load('role');
-        return User::with('role')->find(Auth::id());
+        $user = Auth::user();
+        $resource = new UserResource($user);
+        if ($user->isInfluencer()) {
+            return $resource;
+        }
+
+        return $resource->additional([
+            'permissions' => $user->permissions(),
+        ]);
     }
 
     /**

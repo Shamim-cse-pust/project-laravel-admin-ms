@@ -38,6 +38,8 @@ use Laravel\Passport\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Token> $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoleId($value)
+ * @property int $is_influencer
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsInfluencer($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -84,5 +86,14 @@ class User extends Authenticatable
     public function hasAccessEdit($model)
     {
         return $this->permissions()->contains("edit_{$model}");
+    }
+    public function isAdmin(): bool
+    {
+        return $this->is_influencer === 0;
+    }
+
+    public function isInfluencer(): bool
+    {
+        return $this->is_influencer === 1;
     }
 }
