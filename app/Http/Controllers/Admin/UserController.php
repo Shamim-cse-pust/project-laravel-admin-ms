@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\UserRole;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -35,8 +36,13 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make('1234'),
+        ]);
+
+        UserRole::create([
+            'user_id' => $user->id,
             'role_id' => $request->role_id,
         ]);
+
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }
 
@@ -60,8 +66,13 @@ class UserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
+        ]);
+        UserRole::where('user_id', $id)->delete();
+        UserRole::create([
+            'user_id' => $user->id,
             'role_id' => $request->role_id,
         ]);
+
         return response($user, Response::HTTP_CREATED);
     }
 

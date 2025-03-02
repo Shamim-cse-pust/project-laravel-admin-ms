@@ -20,7 +20,6 @@ class AuthController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
             'is_influencer' => 1,
         ]);
         return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
