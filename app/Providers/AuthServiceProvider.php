@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,11 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Passport::tokensCan([
+            'admin' => 'Admin Access',
+            'user' => 'User Access',
+            'influencer' => 'Influencer Access',
+        ]);
         Gate::define('view', function ($user, $model) {
             return $user->hasAccessView($model) || $user->hasAccessEdit($model);
         });

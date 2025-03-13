@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
+use Laravel\Passport\Http\Middleware\CheckScopes;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Influencer\ProductController as InfluencerProductController;
@@ -33,7 +34,7 @@ Route::group(
 
 // admin routes
 Route::group(
-    ['prefix' => 'admin', 'middleware' => 'auth:api'],
+    ['prefix' => 'admin', 'middleware' => ['auth:api', CheckScopes::class . ':admin']],
     function () {
         Route::get('/chart', [DashboardController::class, 'chart']);
         Route::apiResource('users', UserController::class);
@@ -47,8 +48,7 @@ Route::group(
 
 // influencer routes
 Route::group(
-    ['prefix' => 'admin', 'middleware' => 'auth:api'],
-    // ['prefix' => 'influencer'],
+    ['prefix' => 'influencer', 'middleware' => 'auth:api'],
     function () {
         Route::get('/products', [InfluencerProductController::class, 'index']);
     }
