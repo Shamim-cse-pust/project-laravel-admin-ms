@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use Laravel\Passport\Http\Middleware\CheckScopes;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Influencer\LinkController;
 use App\Http\Controllers\Influencer\ProductController as InfluencerProductController;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -51,5 +52,6 @@ Route::group(
     ['prefix' => 'influencer', 'middleware' => 'auth:api'],
     function () {
         Route::get('/products', [InfluencerProductController::class, 'index']);
+        Route::post('links', [LinkController::class, 'store']);
     }
 );
