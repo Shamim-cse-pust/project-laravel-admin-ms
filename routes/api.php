@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Influencer\LinkController;
 use App\Http\Controllers\Influencer\ProductController as InfluencerProductController;
+use App\Http\Controllers\Checkout\LinkController as CheckoutLinkController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -53,5 +54,12 @@ Route::group(
     function () {
         Route::get('/products', [InfluencerProductController::class, 'index']);
         Route::post('links', [LinkController::class, 'store']);
+    }
+);
+
+Route::group(
+    ['prefix' => 'checkout', 'middleware' => 'auth:api'],
+    function () {
+        Route::get('links/{code}', [CheckoutLinkController::class, 'show']);
     }
 );

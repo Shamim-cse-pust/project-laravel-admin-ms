@@ -20,9 +20,8 @@ class UserResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email' => $this->email,
-            'role_id' => $this->role_id,
             'is_influencer' => $this->is_influencer,
-            $this->mergeWhen(Auth::user()->isAdmin(), [
+            $this->mergeWhen(Auth::user() && Auth::user()->isAdmin(), [
                 'role' => new RoleResource($this->role),
             ]),
         ];
