@@ -27,6 +27,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereProductTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereUpdatedAt($value)
+ * @property string $influencer_revenue
+ * @property string $admin_revenue
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereAdminRevenue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereInfluencerRevenue($value)
  * @mixin \Eloquent
  */
 class OrderItem extends Model
