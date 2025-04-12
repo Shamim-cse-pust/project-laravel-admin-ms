@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Checkout;
 
+use Str;
 use App\Models\Link;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderItem;
+use Cartalyst\Stripe\Stripe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -35,6 +37,8 @@ class OrderController extends Controller
 
             $order->save();
 
+            $LineItems = [];
+
             foreach ($request->input('items') as $item) {
                 $product = Product::find($item['product_id']);
 
@@ -47,14 +51,49 @@ class OrderController extends Controller
                 $orderItem->admin_revenue = 0.9 * $product->price * $item['quantity'];
 
                 $orderItem->save();
+
+                $LineItems[] = [
+                    'name' => $product->title,
+                    'description' => $product->description,
+                    'amount' => $product->price * 100,
+                    'currency' => 'usd',
+                    'quantity' => $orderItem->quantity,
+                    'images' => [$product->image],
+                ];
             }
+
+            $stripe = Stripe::make(env('STRIPE_SECRET'));
+            $source = $stripe->checkout()->sessions()->create([
+                'payment_method_types' => ['card'],
+                'line_items' => $LineItems,
+                'mode' => 'payment',
+                'success_url' => env('CHECKOUT_URL') . '/success?source={CHECKOUT_SESSION_ID}',
+                'cancel_url' => env('CHECKOUT_URL') . '/error',
+            ]);
+
+            $order->transaction_id = $source['id'];
+            $order->save();
 
             DB::commit();
 
-            return compact(['order', 'orderItem']);
+            return $source;
+
+            // return compact(['order', 'orderItem']);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Order creation failed'], 500);
         }
+    }
+
+    public function confirm(Request $request)
+    {
+        if (!$order = Order::whereTransactionId($request->input('source'))->first()) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        $order->complete = true;
+        $order->save();
+
+        return response()->json(['message' => 'Order confirmed successfully'], 200);
     }
 }
