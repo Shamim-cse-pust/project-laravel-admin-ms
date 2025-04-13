@@ -14,6 +14,7 @@ use App\Http\Controllers\Influencer\LinkController;
 use App\Http\Controllers\Influencer\ProductController as InfluencerProductController;
 use App\Http\Controllers\Checkout\LinkController as CheckoutLinkController;
 use App\Http\Controllers\Checkout\OrderController as CheckoutOrderController;
+use App\Http\Controllers\Influencer\StatsController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -56,6 +57,8 @@ Route::group(
     function () {
         Route::get('/products', [InfluencerProductController::class, 'index']);
         Route::post('links', [LinkController::class, 'store']);
+        Route::get('stats', [StatsController::class, 'index']);
+        Route::get('rankings', [StatsController::class, 'rankings']);
     }
 );
 
