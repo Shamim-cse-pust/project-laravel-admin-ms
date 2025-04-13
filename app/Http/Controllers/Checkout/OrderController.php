@@ -11,6 +11,7 @@ use Cartalyst\Stripe\Stripe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Mail;
 
 class OrderController extends Controller
 {
@@ -93,6 +94,15 @@ class OrderController extends Controller
 
         $order->complete = true;
         $order->save();
+        // Send email to admin and influencer
+        Mail::send('influencer.admin', ['order' => $order], function ($message) use ($order) {
+            $message->to('admin@gmail.com');
+            $message->subject('A new order has been completed');
+        });
+        Mail::send('influencer.influencer', ['order' => $order], function ($message) use ($order) {
+            $message->to($order->influencer_email);
+            $message->subject('Your order has been confirmed');
+        });
 
         return response()->json(['message' => 'Order confirmed successfully'], 200);
     }
