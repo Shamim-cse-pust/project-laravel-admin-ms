@@ -13,7 +13,7 @@ class NotifyAdminAddedListener
     {
         Mail::send('admin.adminAdded', ['user' => $event->user], function ($message) use ($event) {
             $message->to($event->user->email);
-            $message->subject('Your order has been confirmed');
+            $message->subject('You are Registered User Now');
         });
     }
 }

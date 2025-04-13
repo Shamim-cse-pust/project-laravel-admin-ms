@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $first_name
@@ -58,7 +58,7 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
-        'role_id',
+        'is_influencer',
     ];
 
     /**

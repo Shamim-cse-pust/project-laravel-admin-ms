@@ -21,13 +21,13 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('user');
+        // $userId = $this->route('user');
 
         $rules = [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
-            'role_id' => 'required|exists:roles,id',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('user'),
+            'is_influencer' => 'required|boolean',
         ];
 
         return $rules;

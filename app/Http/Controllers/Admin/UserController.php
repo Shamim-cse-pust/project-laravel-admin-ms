@@ -37,11 +37,12 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make('1234'),
+            'is_influencer' => $request->is_influencer,
         ]);
 
         UserRole::create([
             'user_id' => $user->id,
-            'role_id' => $request->role_id,
+            'role_id' => $request->role_id ? $request->role_id : 3,
         ]);
         event(new AdminAddedEvent($user));
 

@@ -37,7 +37,8 @@ Route::group(
 
 // admin routes
 Route::group(
-    ['prefix' => 'admin', 'middleware' => ['auth:api', CheckScopes::class . ':admin']],
+    // ['prefix' => 'admin', 'middleware' => ['auth:api', CheckScopes::class . ':admin']],
+    ['prefix' => 'admin', 'middleware' => ['auth:api']],
     function () {
         Route::get('/chart', [DashboardController::class, 'chart']);
         Route::apiResource('users', UserController::class);
