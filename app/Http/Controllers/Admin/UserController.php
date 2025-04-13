@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         Gate::authorize('view', 'users');
-        $users = User::paginate(5);
+        $users = User::paginate(50);
         return UserResource::collection($users);
     }
     public function create()
@@ -53,7 +53,9 @@ class UserController extends Controller
     {
         $user = User::find($id);
         Gate::authorize('view', 'users');
-        return response()->json($user);
+        return response()->json([
+            'user' => new UserResource($user),
+        ]);
     }
     public function edit(string $id)
     {
