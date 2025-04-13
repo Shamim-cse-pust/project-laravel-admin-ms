@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\AdminAddedEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -42,6 +43,7 @@ class UserController extends Controller
             'user_id' => $user->id,
             'role_id' => $request->role_id,
         ]);
+        event(new AdminAddedEvent($user));
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }

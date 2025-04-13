@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Checkout;
 
+use App\Events\OrderCompletedEvent;
 use Str;
 use App\Models\Link;
 use App\Models\Order;
@@ -94,15 +95,8 @@ class OrderController extends Controller
 
         $order->complete = true;
         $order->save();
-        // Send email to admin and influencer
-        Mail::send('influencer.admin', ['order' => $order], function ($message) use ($order) {
-            $message->to('admin@gmail.com');
-            $message->subject('A new order has been completed');
-        });
-        Mail::send('influencer.influencer', ['order' => $order], function ($message) use ($order) {
-            $message->to($order->influencer_email);
-            $message->subject('Your order has been confirmed');
-        });
+
+        event(new OrderCompletedEvent($order));
 
         return response()->json(['message' => 'Order confirmed successfully'], 200);
     }

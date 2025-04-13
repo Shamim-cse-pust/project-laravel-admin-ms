@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'last_name' => fake()->firstName(),
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
-            'role_id' => Role::inRandomOrder()->first()->id,
+            'is_influencer' => 0,
         ];
     }
 }
