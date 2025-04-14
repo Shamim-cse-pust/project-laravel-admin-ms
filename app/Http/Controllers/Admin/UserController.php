@@ -10,6 +10,7 @@ use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\UserRole;
+use Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +22,15 @@ class UserController extends Controller
         $user = Auth::user();
         Gate::authorize('view', 'users');
         $users = User::paginate(50);
-        return UserResource::collection($users);
+        $result = Cache::get('users');
+        if ($result) {
+            return $result;
+        }
+        sleep(2);
+        $resources = UserResource::collection($users);
+        Cache::put('users', $resources, 5);
+        return $resources;
+        // return UserResource::collection($users);
     }
     public function create()
     {

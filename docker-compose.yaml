@@ -18,12 +18,14 @@ services:
       DB_DATABASE: project_laravel_admin_ms
       DB_USERNAME: root
       DB_PASSWORD: root
+      REDIS_HOST: redis
     ports:
       - 9100:8000
     volumes:
       - .:/app
     depends_on:
       - db
+      - redis
     networks:
       - app
 
@@ -40,6 +42,14 @@ services:
       - .dbdata:/var/lib/mysql
     ports:
       - 33066:3306
+    networks:
+      - app
+  redis:
+    container_name: admin_redis
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
     networks:
       - app
 
