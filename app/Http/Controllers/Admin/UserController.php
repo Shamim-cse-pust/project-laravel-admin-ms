@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Events\AdminAddedEvent;
+use Cache;
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Events\AdminAddedEvent;
 use App\Http\Requests\UserRequest;
+use App\Events\UserCacheFlushEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use App\Models\UserRole;
-use Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -21,16 +22,10 @@ class UserController extends Controller
     {
         $user = Auth::user();
         Gate::authorize('view', 'users');
-        $users = User::paginate(50);
-        $result = Cache::get('users');
-        if ($result) {
-            return $result;
-        }
-        sleep(2);
-        $resources = UserResource::collection($users);
-        Cache::put('users', $resources, 5);
-        return $resources;
-        // return UserResource::collection($users);
+        return Cache::remember('users', (20 * 60), function () {
+            sleep(2);
+            return UserResource::collection(User::paginate(50));
+        });
     }
     public function create()
     {
@@ -54,6 +49,7 @@ class UserController extends Controller
             'role_id' => $request->role_id ? $request->role_id : 3,
         ]);
         event(new AdminAddedEvent($user));
+        event(new UserCacheFlushEvent());
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }
@@ -87,6 +83,8 @@ class UserController extends Controller
             'role_id' => $request->role_id,
         ]);
 
+        event(new UserCacheFlushEvent());
+
         return response($user, Response::HTTP_CREATED);
     }
 
@@ -96,6 +94,7 @@ class UserController extends Controller
         Gate::authorize('edit', 'users');
         $user = User::find($id);
         User::destroy($id);
+        event(new UserCacheFlushEvent());
         return response()->json([
             'user' => $user,
             'message' => 'delete successfully!',

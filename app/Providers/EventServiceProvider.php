@@ -4,9 +4,12 @@ namespace App\Providers;
 
 use App\Events\AdminAddedEvent;
 use App\Events\OrderCompletedEvent;
+use App\Events\UserCacheFlushEvent;
 use App\Listeners\NotifyAdminAddedListener;
 use App\Listeners\NotifyAdminListener;
 use App\Listeners\NotifyInfluencerListener;
+use App\Listeners\UserCacheFlushListener;
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -18,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         AdminAddedEvent::class => [
             NotifyAdminAddedListener::class,
+        ],
+        UserCacheFlushEvent::class => [
+            UserCacheFlushListener::class,
         ],
     ];
 
